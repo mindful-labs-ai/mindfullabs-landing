@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindful Labs (마인드풀랩스) - Coming Soon</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Apply the Inter and Noto Sans KR fonts */
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: #0b0f2a; /* Deep navy background */
+            overflow: hidden; /* Hide scrollbars */
+        }
+        
+        /* Canvas for particle animation */
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Custom gradient for visionary text */
+        .text-gradient-vision {
+            background-image: linear-gradient(to right, #ffffff, #a7bfff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Ensure content is above the canvas */
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Footer styling */
+        .main-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+        }
+
+        /* Keep Korean words from breaking awkwardly */
+        .korean-word-break {
+            word-break: keep-all;
+        }
+    </style>
+</head>
+<body class="text-gray-200 antialiased">
+
+    <!-- Particle Animation Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Main Content -->
+    <div class="content-wrapper relative min-h-screen flex flex-col items-center justify-center text-center p-6">
+        <main class="flex-grow flex flex-col items-center justify-center">
+            <!-- Logo -->
+            <h1 class="font-extrabold text-3xl md:text-4xl text-gradient-vision mb-6">
+                Mindful Labs
+            </h1>
+            
+            <!-- Main Teaser Headline -->
+            <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight korean-word-break">
+                AI, 마음을 만나다
+            </h2>
+            <p class="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-gray-300 korean-word-break">
+                최고의 기술로 빚어내는<br>당신만의 마음챙김 솔루션
+            </p>
+
+            <p class="mt-12 text-xl font-semibold text-teal-300 animate-pulse">
+                서비스 준비 중입니다.
+            </p>
+
+            <!-- Email Subscription Form -->
+            <form class="mt-10 w-full max-w-md" id="email-form">
+                <p class="text-base text-gray-300 mb-4 korean-word-break">
+                    가장 먼저 소식을 받아보시려면 이메일을 등록해주세요.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <label for="email-address" class="sr-only">이메일 주소</label>
+                    <input id="email-address" name="email" type="email" autocomplete="email" required 
+                           class="w-full flex-auto px-5 py-3 rounded-lg bg-white/10 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400" 
+                           placeholder="your-email@example.com">
+                    <button type="submit" 
+                            id="submit-button"
+                            class="w-full sm:w-auto bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-blue-500 transition-all transform hover:scale-105">
+                        등록하기
+                    </button>
+                </div>
+                <!-- Form message area -->
+                <p id="form-message" class="mt-4 text-sm"></p>
+            </form>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="main-footer text-center py-8 px-4">
+        <div class="max-w-4xl mx-auto text-xs text-gray-500 korean-word-break">
+            <p class="mb-2">
+                마인드풀랩스 주식회사 (Mindful Labs Inc.)
+            </p>
+            <p>
+                <span>사업자 등록번호: 786-88-03152</span>
+                <span class="mx-2">|</span>
+                <span>대표: 강호남</span>
+            </p>
+            <p>
+                주소: 서울특별시 성동구 뚝섬로 13길 38, 4층 (성수동2가, KT&G상상플래닛)
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Particle Animation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particlesArray = [];
+            const numberOfParticles = 100;
+
+            // Set canvas size
+            function setCanvasSize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            setCanvasSize();
+
+            // Particle class
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 1;
+                    this.speedX = (Math.random() * 0.4) - 0.2; // Slow movement
+                    this.speedY = (Math.random() * 0.4) - 0.2;
+                    this.color = 'rgba(200, 220, 255, 0.8)'; // Bright, cool color
+                }
+                
+                // Update particle position
+                update() {
+                    // Wall collision
+                    if (this.x > canvas.width || this.x < 0) {
+                        this.speedX = -this.speedX;
+                    }
+                    if (this.y > canvas.height || this.y < 0) {
+                        this.speedY = -this.speedY;
+                    }
+                    // Move particle
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                }
+                
+                // Draw particle
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Add a glowing effect
+                    ctx.shadowColor = 'rgba(173, 216, 230, 0.8)'; // Light blue glow
+                    ctx.shadowBlur = 10;
+                }
+            }
+
+            // Create particle array
+            function init() {
+                particlesArray = [];
+                let particleCount = (canvas.width * canvas.height) / 15000;
+                for (let i = 0; i < particleCount; i++) {
+                    particlesArray.push(new Particle());
+                }
+            }
+            init();
+
+            // Connect particles
+            function connect() {
+                let opacityValue = 1;
+                for (let a = 0; a < particlesArray.length; a++) {
+                    for (let b = a + 1; b < particlesArray.length; b++) {
+                        let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
+                                     + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                        
+                        // Check distance
+                        if (distance < (canvas.width/7) * (canvas.height/7)) {
+                            opacityValue = 1 - (distance/20000);
+                            ctx.strokeStyle = `rgba(173, 216, 230, ${opacityValue * 0.1})`; // Faint lines
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            // Animation loop
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particlesArray.length; i++) {
+                    particlesArray[i].update();
+                    particlesArray[i].draw();
+                }
+                connect();
+                requestAnimationFrame(animate);
+            }
+            
+            // Start animation
+            animate();
+
+            // Resize event
+            window.addEventListener('resize', () => {
+                setCanvasSize();
+                init();
+            });
+
+            // --- NEW: Google Sheets Form Submission ---
+
+            // 1. 위 가이드에서 복사한 Google Apps Script 웹 앱 URL을 여기에 붙여넣으세요.
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_EnCJEZq4xM8jn0NXwg-mwk6KbOwU0s9eJgJK5mAeRxHjPVFwEE2e-79zs4nk4r99sA/exec'; 
+            
+            const form = document.getElementById('email-form');
+            const submitButton = document.getElementById('submit-button');
+            const formMessage = document.getElementById('form-message');
+
+            // 2. Apps Script가 응답할 때 호출될 전역 콜백 함수를 정의합니다.
+            window.handleResponse = function(data) {
+                if (data.result === 'success') {
+                    formMessage.textContent = '이메일이 성공적으로 등록되었습니다! 감사합니다.';
+                    formMessage.style.color = '#34D399'; // Green
+                    form.reset();
+                } else {
+                    formMessage.textContent = '오류가 발생했습니다: ' + (data.message || '알 수 없는 오류');
+                    formMessage.style.color = '#F87171'; // Red
+                }
+                
+                // 버튼을 다시 활성화합니다.
+                submitButton.disabled = false;
+                submitButton.textContent = '등록하기';
+                
+                // 동적으로 추가된 스크립트 태그를 정리합니다.
+                const scriptTag = document.getElementById('jsonp-script');
+                if (scriptTag) {
+                    document.body.removeChild(scriptTag);
+                }
+            }
+
+            // 3. 폼 제출 이벤트를 가로챕니다.
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // 기본 폼 제출을 막습니다.
+                
+                const emailInput = document.getElementById('email-address');
+                const email = emailInput.value;
+                
+                if (!email) {
+                    formMessage.textContent = '이메일 주소를 입력해주세요.';
+                    formMessage.style.color = '#FBBF24'; // Yellow
+                    return;
+                }
+
+                // 유효성 검사 (간단)
+                if (!email.includes('@') || !email.includes('.')) {
+                    formMessage.textContent = '올바른 이메일 형식이 아닙니다.';
+                    formMessage.style.color = '#FBBF24'; // Yellow
+                    return;
+                }
+                
+                // 로딩 상태를 표시합니다.
+                submitButton.disabled = true;
+                submitButton.textContent = '등록 중...';
+                formMessage.textContent = ''; // 이전 메시지 지우기
+
+                // 4. JSONP를 사용하여 Google Apps Script로 데이터를 전송합니다.
+                // (CORS 오류를 우회하기 위해 스크립트 태그를 동적으로 생성)
+                const script = document.createElement('script');
+                script.id = 'jsonp-script';
+                script.src = SCRIPT_URL + '?email=' + encodeURIComponent(email) + '&callback=handleResponse';
+                
+                // 스크립트 로드 오류 처리 (예: 잘못된 URL)
+                script.onerror = function() {
+                    formMessage.textContent = '등록 서버에 연결할 수 없습니다. URL을 확인해주세요.';
+                    formMessage.style.color = '#F87171';
+                    submitButton.disabled = false;
+                    submitButton.textContent = '등록하기';
+                };
+                
+                // 스크립트 태그를 body에 추가하여 요청을 보냅니다.
+                document.body.appendChild(script);
+            });
+        });
+    </script>
+
+</body>
+</html>
