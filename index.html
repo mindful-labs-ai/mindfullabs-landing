@@ -15,6 +15,8 @@
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
             background-color: #0b0f2a; /* Deep navy background */
             overflow-x: hidden; /* Hide horizontal scrollbars */
+            height: 100vh; /* NEW: Fix body height to viewport */
+            overflow-y: hidden; /* NEW: Hide vertical scrollbars */
         }
         
         /* Canvas for particle animation */
@@ -40,13 +42,13 @@
         .content-wrapper {
             position: relative;
             z-index: 10;
-            min-height: 100vh; /* Make content wrapper take full viewport height */
+            height: 100vh; /* CHANGED: Make content wrapper take full viewport height */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 6rem 1.5rem 10rem; /* Add padding for footer and top */
+            padding: 4rem 1.5rem 8rem; /* CHANGED: Adjusted padding for non-scroll view */
             box-sizing: border-box; /* Include padding in height calculation */
         }
 
@@ -57,7 +59,7 @@
             left: 0;
             width: 100%;
             z-index: 10;
-            padding-bottom: 2rem; /* Ensure footer content is not cut off */
+            padding: 1.5rem; /* CHANGED: Adjusted padding */
         }
 
         /* Keep Korean words from breaking awkwardly */
@@ -168,8 +170,8 @@
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
                     this.size = Math.random() * 2 + 0.5; // Slightly larger, more varied
-                    this.baseSpeedX = (Math.random() * 0.8) - 0.4; // Faster base movement
-                    this.baseSpeedY = (Math.random() * 0.8) - 0.4;
+                    this.baseSpeedX = (Math.random() * 2) - 1; // CHANGED: Increased speed (was 0.8 / 0.4)
+                    this.baseSpeedY = (Math.random() * 2) - 1; // CHANGED: Increased speed (was 0.8 / 0.4)
                     this.speedX = this.baseSpeedX;
                     this.speedY = this.baseSpeedY;
                     this.color = 'rgba(200, 220, 255, 0.8)'; // Bright, cool color
@@ -348,3 +350,24 @@
 </body>
 </html>
 ```
+
+---
+
+### **업데이트된 `index.html` 파일을 배포하는 방법**
+
+GitHub와 Netlify를 이미 연결해 두셨기 때문에, 배포 과정은 매우 간단합니다. Netlify는 GitHub 저장소의 변경 사항을 자동으로 감지하고 새 버전을 배포하는 기능이 있습니다.
+
+1.  **로컬 `index.html` 파일 업데이트:**
+    * 위에 제공된 **새로운 `index.html` 코드 전체**를 복사합니다.
+    * 이전에 사용하시던 `mindfullabs-landing` 폴더 내의 **기존 `index.html` 파일을 이 새로운 코드로 덮어씁니다.** (기존 내용을 지우고 새 내용을 붙여넣기 하세요.)
+
+2.  **Git 변경 사항 커밋 및 푸시:**
+    * 터미널(Terminal) 또는 Git Bash를 열고, `mindfullabs-landing` 폴더로 이동합니다.
+    * 변경된 `index.html` 파일을 Git에 추가하고 커밋합니다:
+        ```bash
+        git add index.html
+        git commit -m "feat: Dynamic particles and scroll-based animations"
+        ```
+    * 변경 사항을 GitHub 원격 저장소로 푸시합니다:
+        ```bash
+        git push origin main
