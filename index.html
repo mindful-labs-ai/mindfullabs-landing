@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mindful Labs (마인드풀랩스) - Coming Soon</title>
-    <!-- Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Font: Inter & Noto Sans KR --><link rel="preconnect" href="https://fonts.googleapis.com">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     
@@ -66,25 +70,24 @@
         .korean-word-break {
             word-break: keep-all;
         }
-
-        /* --- 스크롤 애니메이션 CSS 제거됨 --- */
-        /*
-        .fade-in { ... }
-        .fade-in.show { ... }
-        */
     </style>
 </head>
 <body class="text-gray-200 antialiased">
 
-    <!-- Particle Animation Canvas --><canvas id="particle-canvas"></canvas>
+    <!-- Particle Canvas Background -->
+    <canvas id="particle-canvas"></canvas>
 
-    <!-- Main Content --><div class="content-wrapper">
+    <!-- Main Content -->
+    <div class="content-wrapper">
         <main class="flex-grow flex flex-col items-center justify-center">
-            <!-- Logo --><h1 class="font-extrabold text-3xl md:text-4xl text-gradient-vision mb-6">
+            
+            <!-- Logo -->
+            <h1 class="font-extrabold text-3xl md:text-4xl text-gradient-vision mb-6">
                 Mindful Labs
             </h1>
             
-            <!-- Main Teaser Headline --><h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight korean-word-break mt-6">
+            <!-- Main Teaser Headline -->
+            <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight korean-word-break mt-6">
                 AI, 마음을 만나다
             </h2>
             <p class="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-gray-300 korean-word-break">
@@ -95,7 +98,8 @@
                 서비스 준비 중입니다.
             </p>
 
-            <!-- Email Subscription Form --><form class="mt-10 w-full max-w-md" id="email-form">
+            <!-- Email Subscription Form -->
+            <form class="mt-10 w-full max-w-md" id="email-form">
                 <p class="text-base text-gray-300 mb-4 korean-word-break">
                     가장 먼저 소식을 받아보시려면 이메일을 등록해주세요.
                 </p>
@@ -110,12 +114,15 @@
                         등록하기
                     </button>
                 </div>
-                <!-- Form message area --><p id="form-message" class="mt-4 text-sm"></p>
+                
+                <!-- Form submission message area -->
+                <p id="form-message" class="mt-4 text-sm"></p>
             </form>
         </main>
     </div>
     
-    <!-- Footer --><footer class="main-footer text-center py-8 px-4">
+    <!-- Footer -->
+    <footer class="main-footer text-center py-8 px-4">
         <div class="max-w-4xl mx-auto text-xs text-gray-500 korean-word-break">
             <p class="mb-2">
                 마인드풀랩스 주식회사 (Mindful Labs Inc.)
@@ -131,7 +138,8 @@
         </div>
     </footer>
 
-    <!-- JavaScript for Particle Animation and Scroll Effects --><script>
+    <!-- JavaScript for Particle Animation and Scroll Effects -->
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('particle-canvas');
             const ctx = canvas.getContext('2d');
@@ -210,17 +218,19 @@
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Add a glowing effect
+                    // RE-ADDED: Added shadowBlur back for visual aesthetics
                     ctx.shadowColor = 'rgba(173, 216, 230, 0.8)'; // Light blue glow
-                    ctx.shadowBlur = 8; // Slightly less blur for more distinct particles
+                    ctx.shadowBlur = 8;
                 }
             }
 
             // Create particle array
             function initParticles() {
                 particlesArray = [];
-                // Adjust particle count based on screen size, more particles for larger screens
-                const particleCount = (canvas.width * canvas.height) / 10000; 
+                // OPTIMIZATION: Adjust particle density and set a max cap
+                const particleDensity = (canvas.width * canvas.height) / 15000; 
+                const particleCount = Math.min(200, particleDensity); // Max 200 particles
+                
                 for (let i = 0; i < particleCount; i++) {
                     particlesArray.push(new Particle());
                 }
@@ -236,11 +246,12 @@
                         let dy = particlesArray[a].y - particlesArray[b].y;
                         let distance = Math.sqrt(dx * dx + dy * dy);
                         
-                        // Connect closer particles with stronger lines
-                        const connectionDistance = Math.min(canvas.width, canvas.height) / 6; // Dynamic connection distance
+                        // OPTIMIZATION: Slightly reduced connection distance
+                        const connectionDistance = Math.min(canvas.width, canvas.height) / 7;
+                        
                         if (distance < connectionDistance) {
                             opacityValue = 1 - (distance / connectionDistance);
-                            ctx.strokeStyle = `rgba(173, 216, 230, ${opacityValue * 0.15})`; // Slightly stronger lines
+                            ctx.strokeStyle = `rgba(173, 216, 230, ${opacityValue * 0.1})`; // Lighter lines
                             ctx.lineWidth = 1;
                             ctx.beginPath();
                             ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
@@ -263,17 +274,9 @@
             }
             animateParticles();
 
-            // --- Scroll-based Fade-in Animation (제거됨) ---
-            /*
-            const fadeInElements = document.querySelectorAll('.fade-in');
-            const observerOptions = { ... };
-            const observer = new IntersectionObserver(...);
-            fadeInElements.forEach(el => { observer.observe(el); });
-            */
-
             // --- Google Sheets Form Submission ---
 
-            // 1. 위 가이드에서 복사한 Google Apps Script 웹 앱 URL을 여기에 붙여넣으세요.
+            // 1. Google Apps Script 웹 앱 URL
             const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_EnCJEZq4xM8jn0NXwg-mwk6KbOwU0s9eJgJK5mAeRxHjPVFwEE2e-79zs4nk4r99sA/exec'; 
             
             const form = document.getElementById('email-form');
@@ -287,7 +290,7 @@
                     formMessage.style.color = '#34D399'; // Green
                     form.reset();
                 } else {
-                    formMessage.textContent = '오류가 발생했습니다: ' + (data.message || '알 수 없는 오류');
+                    formMessage.textContent = '오류가 발생했습니다: ' (data.message || '알 수 없는 오류');
                     formMessage.style.color = '#F87171'; // Red
                 }
                 
@@ -349,25 +352,3 @@
 
 </body>
 </html>
-```
-
----
-
-### **업데이트된 `index.html` 파일을 배포하는 방법**
-
-GitHub와 Netlify를 이미 연결해 두셨기 때문에, 배포 과정은 매우 간단합니다. Netlify는 GitHub 저장소의 변경 사항을 자동으로 감지하고 새 버전을 배포하는 기능이 있습니다.
-
-1.  **로컬 `index.html` 파일 업데이트:**
-    * 위에 제공된 **새로운 `index.html` 코드 전체**를 복사합니다.
-    * 이전에 사용하시던 `mindfullabs-landing` 폴더 내의 **기존 `index.html` 파일을 이 새로운 코드로 덮어씁니다.** (기존 내용을 지우고 새 내용을 붙여넣기 하세요.)
-
-2.  **Git 변경 사항 커밋 및 푸시:**
-    * 터미널(Terminal) 또는 Git Bash를 열고, `mindfullabs-landing` 폴더로 이동합니다.
-    * 변경된 `index.html` 파일을 Git에 추가하고 커밋합니다:
-        ```bash
-        git add index.html
-        git commit -m "feat: Dynamic particles and scroll-based animations"
-        ```
-    * 변경 사항을 GitHub 원격 저장소로 푸시합니다:
-        ```bash
-        git push origin main
