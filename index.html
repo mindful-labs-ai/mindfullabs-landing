@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mindful Labs (마인드풀랩스) - Coming Soon</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Font: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter & Noto Sans KR --><link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     
@@ -16,17 +14,18 @@
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
             background-color: #0b0f2a; /* Deep navy background */
-            overflow: hidden; /* Hide scrollbars */
+            overflow-x: hidden; /* Hide horizontal scrollbars */
         }
         
         /* Canvas for particle animation */
         #particle-canvas {
-            position: absolute;
+            position: fixed; /* Fixed to viewport */
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 0;
+            background-color: #0b0f2a; /* Ensure deep navy background for canvas */
         }
 
         /* Custom gradient for visionary text */
@@ -41,38 +40,49 @@
         .content-wrapper {
             position: relative;
             z-index: 10;
+            min-height: 100vh; /* Make content wrapper take full viewport height */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 1.5rem 10rem; /* Add padding for footer and top */
+            box-sizing: border-box; /* Include padding in height calculation */
         }
 
         /* Footer styling */
         .main-footer {
-            position: absolute;
+            position: absolute; /* Position relative to content-wrapper or body if its height is fixed */
             bottom: 0;
             left: 0;
             width: 100%;
             z-index: 10;
+            padding-bottom: 2rem; /* Ensure footer content is not cut off */
         }
 
         /* Keep Korean words from breaking awkwardly */
         .korean-word-break {
             word-break: keep-all;
         }
+
+        /* --- 스크롤 애니메이션 CSS 제거됨 --- */
+        /*
+        .fade-in { ... }
+        .fade-in.show { ... }
+        */
     </style>
 </head>
 <body class="text-gray-200 antialiased">
 
-    <!-- Particle Animation Canvas -->
-    <canvas id="particle-canvas"></canvas>
+    <!-- Particle Animation Canvas --><canvas id="particle-canvas"></canvas>
 
-    <!-- Main Content -->
-    <div class="content-wrapper relative min-h-screen flex flex-col items-center justify-center text-center p-6">
+    <!-- Main Content --><div class="content-wrapper">
         <main class="flex-grow flex flex-col items-center justify-center">
-            <!-- Logo -->
-            <h1 class="font-extrabold text-3xl md:text-4xl text-gradient-vision mb-6">
+            <!-- Logo --><h1 class="font-extrabold text-3xl md:text-4xl text-gradient-vision mb-6">
                 Mindful Labs
             </h1>
             
-            <!-- Main Teaser Headline -->
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight korean-word-break">
+            <!-- Main Teaser Headline --><h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight korean-word-break mt-6">
                 AI, 마음을 만나다
             </h2>
             <p class="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-gray-300 korean-word-break">
@@ -83,8 +93,7 @@
                 서비스 준비 중입니다.
             </p>
 
-            <!-- Email Subscription Form -->
-            <form class="mt-10 w-full max-w-md" id="email-form">
+            <!-- Email Subscription Form --><form class="mt-10 w-full max-w-md" id="email-form">
                 <p class="text-base text-gray-300 mb-4 korean-word-break">
                     가장 먼저 소식을 받아보시려면 이메일을 등록해주세요.
                 </p>
@@ -99,14 +108,12 @@
                         등록하기
                     </button>
                 </div>
-                <!-- Form message area -->
-                <p id="form-message" class="mt-4 text-sm"></p>
+                <!-- Form message area --><p id="form-message" class="mt-4 text-sm"></p>
             </form>
         </main>
     </div>
     
-    <!-- Footer -->
-    <footer class="main-footer text-center py-8 px-4">
+    <!-- Footer --><footer class="main-footer text-center py-8 px-4">
         <div class="max-w-4xl mx-auto text-xs text-gray-500 korean-word-break">
             <p class="mb-2">
                 마인드풀랩스 주식회사 (Mindful Labs Inc.)
@@ -122,47 +129,79 @@
         </div>
     </footer>
 
-    <!-- JavaScript for Particle Animation -->
-    <script>
+    <!-- JavaScript for Particle Animation and Scroll Effects --><script>
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('particle-canvas');
             const ctx = canvas.getContext('2d');
             let particlesArray = [];
-            const numberOfParticles = 100;
+            let mouse = {
+                x: null,
+                y: null,
+                radius: 100 // Mouse interaction radius
+            };
 
-            // Set canvas size
+            // Set canvas size and update on resize
             function setCanvasSize() {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
             }
             setCanvasSize();
+            window.addEventListener('resize', () => {
+                setCanvasSize();
+                initParticles(); // Re-initialize particles on resize
+            });
+
+            // Mouse position tracking
+            window.addEventListener('mousemove', (event) => {
+                mouse.x = event.x;
+                mouse.y = event.y;
+            });
+            // Reset mouse position when it leaves the window
+            window.addEventListener('mouseout', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
 
             // Particle class
             class Particle {
                 constructor() {
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 2 + 1;
-                    this.speedX = (Math.random() * 0.4) - 0.2; // Slow movement
-                    this.speedY = (Math.random() * 0.4) - 0.2;
+                    this.size = Math.random() * 2 + 0.5; // Slightly larger, more varied
+                    this.baseSpeedX = (Math.random() * 0.8) - 0.4; // Faster base movement
+                    this.baseSpeedY = (Math.random() * 0.8) - 0.4;
+                    this.speedX = this.baseSpeedX;
+                    this.speedY = this.baseSpeedY;
                     this.color = 'rgba(200, 220, 255, 0.8)'; // Bright, cool color
                 }
                 
-                // Update particle position
                 update() {
                     // Wall collision
-                    if (this.x > canvas.width || this.x < 0) {
-                        this.speedX = -this.speedX;
-                    }
-                    if (this.y > canvas.height || this.y < 0) {
-                        this.speedY = -this.speedY;
-                    }
-                    // Move particle
+                    if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
+                    if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
+
                     this.x += this.speedX;
                     this.y += this.speedY;
+
+                    // Mouse interaction
+                    if (mouse.x && mouse.y) {
+                        let dx = this.x - mouse.x;
+                        let dy = this.y - mouse.y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < mouse.radius) {
+                            let angle = Math.atan2(dy, dx);
+                            let pushFactor = (mouse.radius - distance) / mouse.radius; // Stronger push closer to mouse
+                            this.x += Math.cos(angle) * pushFactor * 2; // Push away from mouse
+                            this.y += Math.sin(angle) * pushFactor * 2;
+                        }
+                    }
+
+                    // Reset speed gradually to base speed if not influenced by mouse
+                    this.speedX = this.speedX * 0.95 + this.baseSpeedX * 0.05;
+                    this.speedY = this.speedY * 0.95 + this.baseSpeedY * 0.05;
                 }
                 
-                // Draw particle
                 draw() {
                     ctx.fillStyle = this.color;
                     ctx.beginPath();
@@ -171,32 +210,35 @@
                     
                     // Add a glowing effect
                     ctx.shadowColor = 'rgba(173, 216, 230, 0.8)'; // Light blue glow
-                    ctx.shadowBlur = 10;
+                    ctx.shadowBlur = 8; // Slightly less blur for more distinct particles
                 }
             }
 
             // Create particle array
-            function init() {
+            function initParticles() {
                 particlesArray = [];
-                let particleCount = (canvas.width * canvas.height) / 15000;
+                // Adjust particle count based on screen size, more particles for larger screens
+                const particleCount = (canvas.width * canvas.height) / 10000; 
                 for (let i = 0; i < particleCount; i++) {
                     particlesArray.push(new Particle());
                 }
             }
-            init();
+            initParticles();
 
-            // Connect particles
-            function connect() {
+            // Connect particles with lines
+            function connectParticles() {
                 let opacityValue = 1;
                 for (let a = 0; a < particlesArray.length; a++) {
                     for (let b = a + 1; b < particlesArray.length; b++) {
-                        let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
-                                     + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                        let dx = particlesArray[a].x - particlesArray[b].x;
+                        let dy = particlesArray[a].y - particlesArray[b].y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
                         
-                        // Check distance
-                        if (distance < (canvas.width/7) * (canvas.height/7)) {
-                            opacityValue = 1 - (distance/20000);
-                            ctx.strokeStyle = `rgba(173, 216, 230, ${opacityValue * 0.1})`; // Faint lines
+                        // Connect closer particles with stronger lines
+                        const connectionDistance = Math.min(canvas.width, canvas.height) / 6; // Dynamic connection distance
+                        if (distance < connectionDistance) {
+                            opacityValue = 1 - (distance / connectionDistance);
+                            ctx.strokeStyle = `rgba(173, 216, 230, ${opacityValue * 0.15})`; // Slightly stronger lines
                             ctx.lineWidth = 1;
                             ctx.beginPath();
                             ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
@@ -208,26 +250,26 @@
             }
 
             // Animation loop
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear only particles area
                 for (let i = 0; i < particlesArray.length; i++) {
                     particlesArray[i].update();
                     particlesArray[i].draw();
                 }
-                connect();
-                requestAnimationFrame(animate);
+                connectParticles();
+                requestAnimationFrame(animateParticles);
             }
-            
-            // Start animation
-            animate();
+            animateParticles();
 
-            // Resize event
-            window.addEventListener('resize', () => {
-                setCanvasSize();
-                init();
-            });
+            // --- Scroll-based Fade-in Animation (제거됨) ---
+            /*
+            const fadeInElements = document.querySelectorAll('.fade-in');
+            const observerOptions = { ... };
+            const observer = new IntersectionObserver(...);
+            fadeInElements.forEach(el => { observer.observe(el); });
+            */
 
-            // --- NEW: Google Sheets Form Submission ---
+            // --- Google Sheets Form Submission ---
 
             // 1. 위 가이드에서 복사한 Google Apps Script 웹 앱 URL을 여기에 붙여넣으세요.
             const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_EnCJEZq4xM8jn0NXwg-mwk6KbOwU0s9eJgJK5mAeRxHjPVFwEE2e-79zs4nk4r99sA/exec'; 
@@ -305,3 +347,4 @@
 
 </body>
 </html>
+```
