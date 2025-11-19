@@ -7,49 +7,50 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    // 1. Parse the user's message from the request body
-    const { message } = JSON.parse(event.body);
+    // 1. Parse request
+    const body = JSON.parse(event.body);
+    const message = body.message;
 
-    // 2. Get the API Key securely from Netlify Environment Variables
+    // 2. Check API Key (Server-side)
     const apiKey = process.env.GEMINI_API_KEY;
-
     if (!apiKey) {
-      return { statusCode: 500, body: JSON.stringify({ error: "API Key missing" }) };
+      console.error("GEMINI_API_KEY is missing in Netlify settings.");
+      return { statusCode: 500, body: JSON.stringify({ reply: "서버 설정 오류: API 키가 없습니다." }) };
     }
 
-    // 3. Call Gemini API (Server-to-Server)
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`, {
+    // 3. Call Google API
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are a compassionate mental health AI assistant named 'Mindful AI'. 
-                   The user is sharing their feelings: "${message}". 
-                   Please provide a short, warm, and empathetic response in Korean. 
-                   Include a brief mindfulness tip or a comforting metaphor. 
-                   Keep it under 3 sentences. Tone: Gentle, professional, soothing.`
+            text: `You are 'Mindful AI', a compassionate mental health assistant. User says: "${message}". Provide a warm, empathetic response in Korean (under 3 sentences).`
           }]
         }]
       })
     });
 
     const data = await response.json();
-    
-    // Extract the text safely
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "죄송합니다. AI가 응답을 생성하지 못했습니다.";
 
-    // 4. Return the AI's reply to the frontend
+    // 4. Handle Google's response
+    if (!response.ok) {
+       console.error("Google API Error:", data);
+       return { statusCode: response.status, body: JSON.stringify({ reply: "AI 서버 연결에 실패했습니다." }) };
+    }
+
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "응답을 생성하지 못했습니다.";
+
     return {
       statusCode: 200,
       body: JSON.stringify({ reply: reply })
     };
 
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Function Internal Error:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Internal Server Error" })
+      body: JSON.stringify({ reply: "내부 서버 오류가 발생했습니다." })
     };
   }
 };
