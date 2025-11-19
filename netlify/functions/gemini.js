@@ -21,7 +21,7 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are 'Mindful AI'. User says: "${message}". Provide a warm, empathetic response in Korean (under 3 sentences).`
+            text: `You are 'Mind Caring AI', created by Mindful Labs. User says: "${message}". Provide a warm, empathetic response in Korean (under 3 sentences).`
           }]
         }]
       })
