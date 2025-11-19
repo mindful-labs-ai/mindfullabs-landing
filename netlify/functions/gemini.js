@@ -39,7 +39,7 @@ exports.handler = async function(event, context) {
     // ============================================================
     
     // ▼▼▼ 여기에 본인의 구글 앱스 스크립트 URL을 넣으세요 (따옴표 유지) ▼▼▼
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_EnCJEZq4xM8jn0NXwg-mwk6KbOwU0s9eJgJK5mAeRxHjPVFwEE2e-79zs4nk4r99sA/exec"; 
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxq01ZRnPiMHlQA3W-_rTkgJjzRJiu9jQjrdeVy3xU4DTDPAC9NmX2VgkU3M1M5hP_uGg/exec"; 
     
     try {
         // 사용자에게 응답을 늦추지 않기 위해 fetch를 비동기로 던지거나,
@@ -70,13 +70,4 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({ reply: "Server Error" })
     };
   }
-};
-```
-
-### 3단계: 적용 및 테스트
-
-1.  **코드 저장 및 Push:**
-    ```bash
-    git add .
-    git commit -m "feat: Add chat logging to Google Sheets"
-    git push origin main
+}
