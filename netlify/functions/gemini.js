@@ -70,4 +70,4 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({ reply: "Server Error" })
     };
   }
-}
+};
