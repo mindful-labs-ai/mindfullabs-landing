@@ -21,7 +21,7 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are 'Mindful AI', created by researchers of Mindful Labs. User says: "${message}". Provide a warm, empathetic response in Korean (under 3 sentences).`
+            text: `You are 'Mindful AI'. User says: "${message}". Provide a warm, empathetic response in Korean (under 3 sentences).`
           }]
         }]
       })
@@ -71,3 +71,12 @@ exports.handler = async function(event, context) {
     };
   }
 };
+```
+
+### 3단계: 적용 및 테스트
+
+1.  **코드 저장 및 Push:**
+    ```bash
+    git add .
+    git commit -m "feat: Add chat logging to Google Sheets"
+    git push origin main
