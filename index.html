@@ -5,350 +5,511 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mindful Labs (마인드풀랩스) - Coming Soon</title>
     
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* Apply the Inter and Noto Sans KR fonts */
+        /* --- Base Settings --- */
+        :root {
+            --cursor-size: 20px;
+        }
+
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
-            background-color: #0b0f2a; /* Deep navy background */
-            overflow-x: hidden; /* Hide horizontal scrollbars */
-            height: 100vh; /* NEW: Fix body height to viewport */
-            overflow-y: hidden; /* NEW: Hide vertical scrollbars */
+            background-color: #050511; /* Ultra Deep Navy */
+            color: #ffffff;
+            overflow: hidden; /* No Scroll */
+            height: 100vh;
+            margin: 0;
         }
-        
-        /* Canvas for particle animation */
-        #particle-canvas {
-            position: fixed; /* Fixed to viewport */
+
+        /* --- Canvas & Background --- */
+        #neural-canvas {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 0;
-            background-color: #0b0f2a; /* Ensure deep navy background for canvas */
+            filter: contrast(120%) brightness(1.1);
         }
 
-        /* Custom gradient for visionary text */
-        .text-gradient-vision {
-            background-image: linear-gradient(to right, #ffffff, #a7bfff);
+        /* --- Glassmorphism Containers --- */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            color: white;
+        }
+        .glass-input:focus {
+            background: rgba(0, 0, 0, 0.5);
+            border-color: #2dd4bf; /* Teal-400 */
+            box-shadow: 0 0 15px rgba(45, 212, 191, 0.2);
+            outline: none;
+        }
+
+        /* --- Typography & Effects --- */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(45, 212, 191, 0.3);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 50%, #2dd4bf 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            background-size: 200% 200%;
+            animation: gradient-shift 8s ease infinite;
         }
 
-        /* Ensure content is above the canvas */
-        .content-wrapper {
-            position: relative;
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- Layout Utilities --- */
+        .center-stage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            max-width: 1200px;
             z-index: 10;
-            height: 100vh; /* CHANGED: Make content wrapper take full viewport height */
+            padding: 2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 4rem 1.5rem 8rem; /* CHANGED: Adjusted padding for non-scroll view */
-            box-sizing: border-box; /* Include padding in height calculation */
         }
 
-        /* Footer styling */
-        .main-footer {
-            position: absolute; /* Position relative to content-wrapper or body if its height is fixed */
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 10;
-            padding: 1.5rem; /* CHANGED: Adjusted padding */
-        }
-
-        /* Keep Korean words from breaking awkwardly */
-        .korean-word-break {
+        .korean-keep-all {
             word-break: keep-all;
         }
+
+        /* --- Footer --- */
+        .floating-footer {
+            position: absolute;
+            bottom: 2rem;
+            left: 0;
+            width: 100%;
+            z-index: 20;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            transition: color 0.3s ease;
+        }
+        .floating-footer:hover {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* --- Tabs & Animations --- */
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .tab-btn.active {
+            color: #fff;
+            border-bottom-color: #2dd4bf;
+        }
+        .fade-enter {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Markdown style for AI response */
+        .ai-response strong { color: #a5f3fc; font-weight: 600; }
+        .ai-response em { color: #ddd; font-style: italic; }
     </style>
 </head>
-<body class="text-gray-200 antialiased">
+<body>
 
-    <!-- Particle Canvas Background -->
-    <canvas id="particle-canvas"></canvas>
+    <!-- 1. The Neural Network Background -->
+    <canvas id="neural-canvas"></canvas>
 
-    <!-- Main Content -->
-    <div class="content-wrapper">
-        <main class="flex-grow flex flex-col items-center justify-center">
-            
-            <!-- Logo -->
-            <h1 class="font-extrabold text-3xl md:text-4xl text-gradient-vision mb-6">
-                Mindful Labs
+    <!-- 2. The Main Stage (Hero Section) -->
+    <div class="center-stage">
+        
+        <!-- Brand Identity -->
+        <div class="mb-8 text-center opacity-0 animate-[fadeIn_1s_ease-out_forwards]">
+            <p class="text-teal-400 text-sm tracking-[0.3em] uppercase font-semibold mb-4 animate-pulse">
+                System Initializing...
+            </p>
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter text-white mb-2">
+                Mindful <span class="font-light text-white/50">Labs</span>
             </h1>
-            
-            <!-- Main Teaser Headline -->
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight korean-word-break mt-6">
-                AI, 마음을 만나다
+            <div class="h-1 w-24 bg-gradient-to-r from-teal-500 to-purple-600 mx-auto rounded-full"></div>
+        </div>
+
+        <!-- Main Copy & Value Proposition -->
+        <div class="glass-panel p-8 md:p-12 rounded-3xl max-w-2xl w-full text-center relative overflow-hidden opacity-0 animate-[fadeIn_1s_ease-out_0.5s_forwards]">
+            <!-- Decorative Glow inside card -->
+            <div class="absolute -top-20 -left-20 w-40 h-40 bg-teal-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Headline -->
+            <h2 class="text-3xl md:text-5xl font-bold mb-4 leading-tight korean-keep-all">
+                <span class="gradient-text">AI, 마음을 만나다</span>
             </h2>
-            <p class="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-gray-300 korean-word-break">
+            
+            <!-- Subtext -->
+            <p class="text-gray-300 text-lg md:text-xl font-light leading-relaxed mb-6 korean-keep-all">
                 최고의 기술로 빚어내는<br>당신만의 마음챙김 솔루션
             </p>
 
-            <p class="mt-12 text-xl font-semibold text-teal-300 animate-pulse">
-                서비스 준비 중입니다.
-            </p>
+            <!-- Interactive Tabs -->
+            <div class="flex justify-center gap-8 mb-6 border-b border-white/10 pb-2">
+                <button onclick="switchTab('waitlist')" id="tab-waitlist" class="tab-btn active pb-2 font-medium text-sm tracking-wider uppercase">
+                    사전 예약
+                </button>
+                <button onclick="switchTab('ai-demo')" id="tab-ai-demo" class="tab-btn pb-2 font-medium text-sm tracking-wider uppercase flex items-center gap-2">
+                    <span>✨ AI 마음챙김 체험</span>
+                </button>
+            </div>
 
-            <!-- Email Subscription Form -->
-            <form class="mt-10 w-full max-w-md" id="email-form">
-                <p class="text-base text-gray-300 mb-4 korean-word-break">
-                    가장 먼저 소식을 받아보시려면 이메일을 등록해주세요.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <label for="email-address" class="sr-only">이메일 주소</label>
-                    <input id="email-address" name="email" type="email" autocomplete="email" required 
-                           class="w-full flex-auto px-5 py-3 rounded-lg bg-white/10 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400" 
-                           placeholder="your-email@example.com">
-                    <button type="submit" 
-                            id="submit-button"
-                            class="w-full sm:w-auto bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-blue-500 transition-all transform hover:scale-105">
-                        등록하기
-                    </button>
+            <!-- CONTENT 1: Waitlist Form -->
+            <div id="content-waitlist" class="fade-enter">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-900/30 border border-teal-500/20 mb-6">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+                    </span>
+                    <span class="text-xs text-teal-200 font-medium tracking-wide">서비스 준비 중입니다.</span>
                 </div>
-                
-                <!-- Form submission message area -->
-                <p id="form-message" class="mt-4 text-sm"></p>
-            </form>
-        </main>
+
+                <form id="email-form" class="relative z-10 w-full max-w-md mx-auto flex flex-col gap-4">
+                    <p class="text-sm text-gray-400 mb-1 korean-keep-all">
+                        가장 먼저 소식을 받아보시려면 이메일을 등록해주세요.
+                    </p>
+                    <div class="relative group">
+                        <input 
+                            type="email" 
+                            id="email-address" 
+                            name="email" 
+                            required
+                            placeholder="your-email@example.com" 
+                            class="glass-input w-full px-6 py-4 rounded-xl placeholder-gray-500 text-center md:text-left"
+                        >
+                        <button 
+                            type="submit" 
+                            id="submit-button"
+                            class="mt-3 md:mt-0 md:absolute md:right-2 md:top-2 bg-white text-black font-bold px-6 py-2 md:h-[calc(100%-16px)] rounded-lg hover:bg-teal-50 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(45,212,191,0.5)]"
+                        >
+                            등록하기
+                        </button>
+                    </div>
+                    <p id="form-message" class="text-xs h-4 font-medium"></p>
+                </form>
+            </div>
+
+            <!-- CONTENT 2: AI Demo -->
+            <div id="content-ai-demo" class="hidden">
+                <div class="w-full max-w-md mx-auto flex flex-col gap-4">
+                    <p class="text-sm text-teal-200 mb-1 korean-keep-all">
+                        지금 당신의 마음 상태나 고민을 짧게 적어보세요.<br>AI가 따뜻한 한마디를 건네드립니다.
+                    </p>
+                    
+                    <div class="relative group w-full">
+                        <textarea 
+                            id="ai-input" 
+                            rows="2"
+                            placeholder="예: 요즘 일이 너무 많아서 지쳐요..." 
+                            class="glass-input w-full px-6 py-4 rounded-xl placeholder-gray-500 text-left resize-none"
+                        ></textarea>
+                        <button 
+                            onclick="generateMindfulness()" 
+                            id="ai-submit-btn"
+                            class="w-full mt-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-bold px-6 py-3 rounded-xl hover:from-teal-400 hover:to-blue-500 transition-all shadow-lg flex items-center justify-center gap-2"
+                        >
+                            <span>✨ AI에게 위로받기</span>
+                        </button>
+                    </div>
+
+                    <!-- AI Response Area -->
+                    <div id="ai-result-container" class="hidden mt-4 text-left bg-white/5 rounded-xl p-6 border border-white/10">
+                        <div class="flex items-start gap-3">
+                            <div class="mt-1 p-1.5 bg-teal-500/20 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-teal-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wider mb-1">Mindful AI Insight</h4>
+                                <p id="ai-response-text" class="text-sm text-gray-200 leading-relaxed ai-response"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
-    
-    <!-- Footer -->
-    <footer class="main-footer text-center py-8 px-4">
-        <div class="max-w-4xl mx-auto text-xs text-gray-500 korean-word-break">
-            <p class="mb-2">
-                마인드풀랩스 주식회사 (Mindful Labs Inc.)
-            </p>
-            <p>
-                <span>사업자 등록번호: 786-88-03152</span>
-                <span class="mx-2">|</span>
-                <span>대표: 강호남</span>
-            </p>
-            <p>
-                주소: 서울특별시 성동구 뚝섬로 13길 38, 4층 (성수동2가, KT&G상상플래닛)
-            </p>
+
+    <!-- 3. Footer -->
+    <footer class="floating-footer text-center">
+        <div class="max-w-screen-xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 opacity-50 hover:opacity-100 transition-opacity duration-500">
+            <div class="text-left">
+                <p class="font-bold text-white/90">마인드풀랩스 주식회사 (Mindful Labs Inc.)</p>
+            </div>
+            
+            <div class="text-right flex flex-col gap-1 md:items-end text-gray-300">
+                <p>사업자 등록번호: 786-88-03152 <span class="mx-2 text-white/20">|</span> 대표: 강호남</p>
+                <p>주소: 서울특별시 성동구 뚝섬로 13길 38, 4층 (성수동2가, KT&G상상플래닛)</p>
+            </div>
         </div>
     </footer>
 
-    <!-- JavaScript for Particle Animation and Scroll Effects -->
+    <!-- Javascript Logic -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const canvas = document.getElementById('particle-canvas');
-            const ctx = canvas.getContext('2d');
-            let particlesArray = [];
-            let mouse = {
-                x: null,
-                y: null,
-                radius: 100 // Mouse interaction radius
-            };
+        // --- TABS LOGIC ---
+        function switchTab(tabName) {
+            const waitlistContent = document.getElementById('content-waitlist');
+            const aiContent = document.getElementById('content-ai-demo');
+            const waitlistBtn = document.getElementById('tab-waitlist');
+            const aiBtn = document.getElementById('tab-ai-demo');
 
-            // Set canvas size and update on resize
-            function setCanvasSize() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+            if (tabName === 'waitlist') {
+                waitlistContent.classList.remove('hidden');
+                waitlistContent.classList.add('fade-enter');
+                aiContent.classList.add('hidden');
+                waitlistBtn.classList.add('active');
+                aiBtn.classList.remove('active');
+            } else {
+                waitlistContent.classList.add('hidden');
+                aiContent.classList.remove('hidden');
+                aiContent.classList.add('fade-enter');
+                waitlistBtn.classList.remove('active');
+                aiBtn.classList.add('active');
             }
-            setCanvasSize();
-            window.addEventListener('resize', () => {
-                setCanvasSize();
-                initParticles(); // Re-initialize particles on resize
-            });
+        }
 
-            // Mouse position tracking
-            window.addEventListener('mousemove', (event) => {
-                mouse.x = event.x;
-                mouse.y = event.y;
-            });
-            // Reset mouse position when it leaves the window
-            window.addEventListener('mouseout', () => {
-                mouse.x = null;
-                mouse.y = null;
-            });
+        /**
+         * PART 1: High-Performance Neural Network Animation
+         * (Optimized & Preserved)
+         */
+        const canvas = document.getElementById('neural-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+        
+        const CONFIG = {
+            particleCount: 0,
+            connectionDistance: 140,
+            mouseDistance: 250,
+            baseColor: 'rgba(100, 200, 255, ', 
+            accentColor: 'rgba(45, 212, 191, ' 
+        };
 
-            // Particle class
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 2 + 0.5; // Slightly larger, more varied
-                    this.baseSpeedX = (Math.random() * 2) - 1; // CHANGED: Increased speed (was 0.8 / 0.4)
-                    this.baseSpeedY = (Math.random() * 2) - 1; // CHANGED: Increased speed (was 0.8 / 0.4)
-                    this.speedX = this.baseSpeedX;
-                    this.speedY = this.baseSpeedY;
-                    this.color = 'rgba(200, 220, 255, 0.8)'; // Bright, cool color
-                }
-                
-                update() {
-                    // Wall collision
-                    if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
-                    if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
+        let mouse = { x: null, y: null };
 
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-
-                    // Mouse interaction
-                    if (mouse.x && mouse.y) {
-                        let dx = this.x - mouse.x;
-                        let dy = this.y - mouse.y;
-                        let distance = Math.sqrt(dx * dx + dy * dy);
-
-                        if (distance < mouse.radius) {
-                            let angle = Math.atan2(dy, dx);
-                            let pushFactor = (mouse.radius - distance) / mouse.radius; // Stronger push closer to mouse
-                            this.x += Math.cos(angle) * pushFactor * 2; // Push away from mouse
-                            this.y += Math.sin(angle) * pushFactor * 2;
-                        }
-                    }
-
-                    // Reset speed gradually to base speed if not influenced by mouse
-                    this.speedX = this.speedX * 0.95 + this.baseSpeedX * 0.05;
-                    this.speedY = this.speedY * 0.95 + this.baseSpeedY * 0.05;
-                }
-                
-                draw() {
-                    ctx.fillStyle = this.color;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // RE-ADDED: Added shadowBlur back for visual aesthetics
-                    ctx.shadowColor = 'rgba(173, 216, 230, 0.8)'; // Light blue glow
-                    ctx.shadowBlur = 8;
-                }
-            }
-
-            // Create particle array
-            function initParticles() {
-                particlesArray = [];
-                // OPTIMIZATION: Adjust particle density and set a max cap
-                const particleDensity = (canvas.width * canvas.height) / 15000; 
-                const particleCount = Math.min(200, particleDensity); // Max 200 particles
-                
-                for (let i = 0; i < particleCount; i++) {
-                    particlesArray.push(new Particle());
-                }
-            }
+        const resize = () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            const area = width * height;
+            CONFIG.particleCount = Math.min(180, Math.floor(area / 9000)); 
             initParticles();
+        };
 
-            // Connect particles with lines
-            function connectParticles() {
-                let opacityValue = 1;
-                for (let a = 0; a < particlesArray.length; a++) {
-                    for (let b = a + 1; b < particlesArray.length; b++) {
-                        let dx = particlesArray[a].x - particlesArray[b].x;
-                        let dy = particlesArray[a].y - particlesArray[b].y;
-                        let distance = Math.sqrt(dx * dx + dy * dy);
-                        
-                        // OPTIMIZATION: Slightly reduced connection distance
-                        const connectionDistance = Math.min(canvas.width, canvas.height) / 7;
-                        
-                        if (distance < connectionDistance) {
-                            opacityValue = 1 - (distance / connectionDistance);
-                            ctx.strokeStyle = `rgba(173, 216, 230, ${opacityValue * 0.1})`; // Lighter lines
-                            ctx.lineWidth = 1;
-                            ctx.beginPath();
-                            ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                            ctx.stroke();
-                        }
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.size = Math.random() * 2 + 1;
+                this.isAccent = Math.random() > 0.85; 
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    if (distance < CONFIG.mouseDistance) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const force = (CONFIG.mouseDistance - distance) / CONFIG.mouseDistance;
+                        const direction = -1; 
+                        const strength = 2;
+                        this.vx += forceDirectionX * force * direction * 0.05 * strength;
+                        this.vy += forceDirectionY * force * direction * 0.05 * strength;
                     }
                 }
             }
 
-            // Animation loop
-            function animateParticles() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear only particles area
-                for (let i = 0; i < particlesArray.length; i++) {
-                    particlesArray[i].update();
-                    particlesArray[i].draw();
-                }
-                connectParticles();
-                requestAnimationFrame(animateParticles);
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.shadowBlur = this.isAccent ? 15 : 5;
+                ctx.shadowColor = this.isAccent ? '#2dd4bf' : '#ffffff';
+                ctx.fillStyle = this.isAccent ? '#2dd4bf' : 'rgba(255, 255, 255, 0.8)';
+                ctx.fill();
+                ctx.shadowBlur = 0; 
             }
-            animateParticles();
+        }
 
-            // --- Google Sheets Form Submission ---
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < CONFIG.particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
 
-            // 1. Google Apps Script 웹 앱 URL
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_EnCJEZq4xM8jn0NXwg-mwk6KbOwU0s9eJgJK5mAeRxHjPVFwEE2e-79zs4nk4r99sA/exec'; 
-            
-            const form = document.getElementById('email-form');
-            const submitButton = document.getElementById('submit-button');
-            const formMessage = document.getElementById('form-message');
-
-            // 2. Apps Script가 응답할 때 호출될 전역 콜백 함수를 정의합니다.
-            window.handleResponse = function(data) {
-                if (data.result === 'success') {
-                    formMessage.textContent = '이메일이 성공적으로 등록되었습니다! 감사합니다.';
-                    formMessage.style.color = '#34D399'; // Green
-                    form.reset();
-                } else {
-                    formMessage.textContent = '오류가 발생했습니다: ' (data.message || '알 수 없는 오류');
-                    formMessage.style.color = '#F87171'; // Red
-                }
-                
-                // 버튼을 다시 활성화합니다.
-                submitButton.disabled = false;
-                submitButton.textContent = '등록하기';
-                
-                // 동적으로 추가된 스크립트 태그를 정리합니다.
-                const scriptTag = document.getElementById('jsonp-script');
-                if (scriptTag) {
-                    document.body.removeChild(scriptTag);
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    if (distance < CONFIG.connectionDistance) {
+                        let opacity = 1 - (distance / CONFIG.connectionDistance);
+                        ctx.strokeStyle = CONFIG.baseColor + (opacity * 0.15) + ')';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
                 }
             }
+            requestAnimationFrame(animate);
+        }
 
-            // 3. 폼 제출 이벤트를 가로챕니다.
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); // 기본 폼 제출을 막습니다.
-                
-                const emailInput = document.getElementById('email-address');
-                const email = emailInput.value;
-                
-                if (!email) {
-                    formMessage.textContent = '이메일 주소를 입력해주세요.';
-                    formMessage.style.color = '#FBBF24'; // Yellow
-                    return;
-                }
+        window.addEventListener('resize', resize);
+        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+        window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+        resize();
+        animate();
 
-                // 유효성 검사 (간단)
-                if (!email.includes('@') || !email.includes('.')) {
-                    formMessage.textContent = '올바른 이메일 형식이 아닙니다.';
-                    formMessage.style.color = '#FBBF24'; // Yellow
-                    return;
-                }
-                
-                // 로딩 상태를 표시합니다.
-                submitButton.disabled = true;
-                submitButton.textContent = '등록 중...';
-                formMessage.textContent = ''; // 이전 메시지 지우기
 
-                // 4. JSONP를 사용하여 Google Apps Script로 데이터를 전송합니다.
-                // (CORS 오류를 우회하기 위해 스크립트 태그를 동적으로 생성)
-                const script = document.createElement('script');
-                script.id = 'jsonp-script';
-                script.src = SCRIPT_URL + '?email=' + encodeURIComponent(email) + '&callback=handleResponse';
-                
-                // 스크립트 로드 오류 처리 (예: 잘못된 URL)
-                script.onerror = function() {
-                    formMessage.textContent = '등록 서버에 연결할 수 없습니다. URL을 확인해주세요.';
-                    formMessage.style.color = '#F87171';
-                    submitButton.disabled = false;
-                    submitButton.textContent = '등록하기';
-                };
-                
-                // 스크립트 태그를 body에 추가하여 요청을 보냅니다.
-                document.body.appendChild(script);
-            });
+        /**
+         * PART 2: Google Sheets Form Logic
+         */
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_EnCJEZq4xM8jn0NXwg-mwk6KbOwU0s9eJgJK5mAeRxHjPVFwEE2e-79zs4nk4r99sA/exec';
+        const form = document.getElementById('email-form');
+        const submitButton = document.getElementById('submit-button');
+        const formMessage = document.getElementById('form-message');
+
+        window.handleResponse = function(data) {
+            if (data.result === 'success') {
+                formMessage.textContent = '이메일이 성공적으로 등록되었습니다! 감사합니다.';
+                formMessage.className = 'text-xs h-4 font-bold text-teal-400 animate-pulse';
+                form.reset();
+            } else {
+                formMessage.textContent = '오류가 발생했습니다: ' + (data.message || '알 수 없는 오류');
+                formMessage.className = 'text-xs h-4 font-bold text-red-400';
+            }
+            submitButton.disabled = false;
+            submitButton.innerHTML = '등록하기';
+            const scriptTag = document.getElementById('jsonp-script');
+            if (scriptTag) document.body.removeChild(scriptTag);
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email-address').value;
+            if (!email || !email.includes('@')) {
+                formMessage.textContent = '올바른 이메일 형식이 아닙니다.';
+                formMessage.className = 'text-xs h-4 font-bold text-yellow-400';
+                return;
+            }
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="animate-spin inline-block mr-2">⟳</span> 등록 중...';
+            formMessage.textContent = '';
+            const script = document.createElement('script');
+            script.id = 'jsonp-script';
+            script.src = SCRIPT_URL + '?email=' + encodeURIComponent(email) + '&callback=handleResponse';
+            document.body.appendChild(script);
         });
-    </script>
 
+
+        /**
+         * PART 3: Gemini API Integration (AI Demo)
+         */
+        async function generateMindfulness() {
+            const input = document.getElementById('ai-input').value;
+            const btn = document.getElementById('ai-submit-btn');
+            const resultContainer = document.getElementById('ai-result-container');
+            const resultText = document.getElementById('ai-response-text');
+            
+            // API Key setup
+            const apiKey = ""; // Provided by environment
+
+            if (!input.trim()) {
+                alert("내용을 입력해주세요.");
+                return;
+            }
+
+            // UI Loading State
+            btn.disabled = true;
+            btn.innerHTML = '<span class="animate-spin inline-block mr-2">✨</span> 마음을 읽는 중...';
+            resultContainer.classList.add('hidden');
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.0-pro-preview:generateContent?key=${AIzaSyD4UnrDQgddwEgfVX7xX0bCWoRv3dipU7A}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `You are a compassionate mental health AI assistant named 'Mindful AI'. 
+                                The user is sharing their feelings: "${input}". 
+                                Please provide a short, warm, and empathetic response in Korean. 
+                                Include a brief mindfulness tip or a comforting metaphor. 
+                                Keep it under 3 sentences. Tone: Gentle, professional, soothing.`
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) throw new Error('API Error');
+
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+
+                // Display Result
+                resultText.innerText = aiText;
+                resultContainer.classList.remove('hidden');
+                resultContainer.classList.add('fade-enter');
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert("죄송합니다. 잠시 후 다시 시도해주세요.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>✨ AI에게 위로받기</span>';
+            }
+        }
+    </script>
 </body>
 </html>
